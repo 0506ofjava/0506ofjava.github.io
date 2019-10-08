@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JDBC基础写法及优化JDBC基础写法JDBC实际就是服务器与数据库之间进行数据交换的桥梁，那究竟怎么才能搭好这座桥呢？以下将从背景知识、基本步骤、项目实践和总结反思四个方面进行阐述。 背景知识项目总体涉及到以下几个方面的基础知识  反射技术：主要体现在驱动的加载过程，如Class.forName(“com.mysql.jdbc.Drive”) MVC框架：MVC即模型（MODEL）-表示（VIE">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JDBC基础篇">
+<meta property="og:url" content="http://yoursite.com/2019/09/30/JDBC基础篇/index.html">
+<meta property="og:site_name" content="YQ的小世界">
+<meta property="og:description" content="JDBC基础写法及优化JDBC基础写法JDBC实际就是服务器与数据库之间进行数据交换的桥梁，那究竟怎么才能搭好这座桥呢？以下将从背景知识、基本步骤、项目实践和总结反思四个方面进行阐述。 背景知识项目总体涉及到以下几个方面的基础知识  反射技术：主要体现在驱动的加载过程，如Class.forName(“com.mysql.jdbc.Drive”) MVC框架：MVC即模型（MODEL）-表示（VIE">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-06T00:38:27.017Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JDBC基础篇">
+<meta name="twitter:description" content="JDBC基础写法及优化JDBC基础写法JDBC实际就是服务器与数据库之间进行数据交换的桥梁，那究竟怎么才能搭好这座桥呢？以下将从背景知识、基本步骤、项目实践和总结反思四个方面进行阐述。 背景知识项目总体涉及到以下几个方面的基础知识  反射技术：主要体现在驱动的加载过程，如Class.forName(“com.mysql.jdbc.Drive”) MVC框架：MVC即模型（MODEL）-表示（VIE">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/30/JDBC基础篇/">
+
+
+
+
+
+  <title>JDBC基础篇 | YQ的小世界</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YQ的小世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">记录美好生活</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/30/JDBC基础篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="YIQIANG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YQ的小世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JDBC基础篇</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-30T01:09:11+08:00">
+                2019-09-30
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-10-06T08:38:27+08:00">
+                2019-10-06
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="JDBC基础写法及优化"><a href="#JDBC基础写法及优化" class="headerlink" title="JDBC基础写法及优化"></a>JDBC基础写法及优化</h1><h2 id="JDBC基础写法"><a href="#JDBC基础写法" class="headerlink" title="JDBC基础写法"></a>JDBC基础写法</h2><p>JDBC实际就是服务器与数据库之间进行数据交换的桥梁，那究竟怎么才能搭好这座桥呢？以下将从背景知识、基本步骤、项目实践和总结反思四个方面进行阐述。</p>
+<h3 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h3><p>项目总体涉及到以下几个方面的基础知识</p>
+<ul>
+<li>反射技术：主要体现在驱动的加载过程，如Class.forName(“com.mysql.jdbc.Drive”)</li>
+<li>MVC框架：MVC即模型（MODEL）-表示（VIEW）-控制（CONTROL），如jsp-servlet-javabean、structs2</li>
+<li>Sql语句：增删改查（CRUD），其中查询为重中之重</li>
+<li>泛型：常与容器相关</li>
+<li>设计模式：</li>
+<li>JavaDoc生成方法及优化：思考怎么生成优雅的JavaDoc文件，方便他人与自己的阅读</li>
+<li>集合类：ArrayList()、HashMap()的使用，包括声明、赋值、添加以及遍历</li>
+</ul>
+<p>对于MVC的模型层，多讲两句。以当前项目的观察而言，模型层为主要的业务逻辑层。简单的包括：数据库映射（操作对象）、Dao层（数据访问层面向表，建议只针对某张表做原子化操作：增删改查）、Service层（对Dao层进行封装，面向业务：事务控制）</p>
+<h3 id="基本步骤"><a href="#基本步骤" class="headerlink" title="基本步骤"></a>基本步骤</h3><ul>
+<li>Dao层：面向表单，负责针对表单做原子化操作：增删改查<ol>
+<li>加载数据库驱动：Class.forName(“com.mysql.jdbc.Driver”)</li>
+<li>创建连接指定数据库的对象：Connection connection=DriveManager.getConnection(URL，NAME，PASSWORD)</li>
+<li>创建执行SQL语句的对象：Statement stament=connection.createStatement()、或者PreparedStatement preparedStatement=connection.preparedStatement(sql)</li>
+<li>查询结果（查询）：ResultSet resultset=preparedStatement.executeQuery()、ResultSet resultSet=Statement.executeQuery(sql)</li>
+<li>简单执行(增加、删除、更改)：preparedStatement.excute()</li>
+<li>增删改查：增（add方法：INSERT INTO tablename  (id,name,age) values(?,?,?);)、删（DELETE FROM tablename   WHERE id=?;)、改（UPDATE tablename SET name=? WHERE id=?;)、查（SELECTE * FROM tablename WHERE id=?）</li>
+</ol>
+</li>
+<li>Service层：创建Dao的实例对象，调用Dao类方法</li>
+</ul>
+<h3 id="项目实践"><a href="#项目实践" class="headerlink" title="项目实践"></a>项目实践</h3><p>主要代码如下所示：</p>
+<p>Dao类：增删改查具体逻辑代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> jdbc_1.model;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 针对family表单，提供相应的原子化操作：增删改查</span></span><br><span class="line"><span class="comment"> * &lt;ol&gt;</span></span><br><span class="line"><span class="comment"> *  &lt;li&gt;利用getConnection获取数据库连接&lt;/li&gt;</span></span><br><span class="line"><span class="comment"> *  &lt;li&gt;利用connection创建statement或preparedStatement对象&lt;/li&gt;</span></span><br><span class="line"><span class="comment"> *  &lt;li&gt;利用statement或preparedStatement操作数据库，如execute或executeQuery方法&lt;/li&gt;</span></span><br><span class="line"><span class="comment"> * &lt;/ol&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Dao</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**静态成员变量*/</span></span><br><span class="line">    <span class="keyword">private</span> Connection connection=DB.getConnection();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 向数据库中增加1条信息，其输入顺序为id,name,sex,age,relationship</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *     数据通过map传递至sql语句，然后再通过execute语句对数据库进行增加操作</span></span><br><span class="line"><span class="comment">     * &lt;/p&gt;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> SQLException 当出现SQL语句错误时，抛出此异常</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> person 将map对象的各参数变化传递给数据库</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Person person)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        String sql=<span class="string">"insert into family (id,name,sex,age,relationship) values(?,?,?,?,?);"</span>;</span><br><span class="line"></span><br><span class="line">        PreparedStatement preparedStatement= connection.prepareStatement(sql);</span><br><span class="line">        preparedStatement.setInt(<span class="number">1</span>, person.getId());</span><br><span class="line">        preparedStatement.setString(<span class="number">2</span>, person.getName());</span><br><span class="line">        preparedStatement.setString(<span class="number">3</span>, person.getSex());</span><br><span class="line">        preparedStatement.setInt(<span class="number">4</span>, person.getAge());</span><br><span class="line">        preparedStatement.setString(<span class="number">5</span>, person.getRelationship());</span><br><span class="line"></span><br><span class="line">        preparedStatement.execute();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 删除指定ID对象的数据库信息，无返回</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *      删除数据库中参数id所在的条目</span></span><br><span class="line"><span class="comment">     * &lt;/p&gt;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> SQLException 当出现SQL语句错误时，抛出此异常</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 确定需要删除的条目</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">del</span><span class="params">(Integer id)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        String sql=<span class="string">"delete  from family where id=?;"</span>;</span><br><span class="line"></span><br><span class="line">        PreparedStatement preparedStatement= connection.prepareStatement(sql);</span><br><span class="line">        preparedStatement.setInt(<span class="number">1</span>,id);</span><br><span class="line"></span><br><span class="line">        preparedStatement.execute();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更改指定ID对象的数据库信息，无返回</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *     利用sql语句“update family set name=?,sex=? where id=?"，对指定ID对象的数据库信息进行更改</span></span><br><span class="line"><span class="comment">     * &lt;/p&gt;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> SQLException 当出现SQL语句错误时，抛出此异常</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> person 将map对象的各参数变化传递给数据库</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Person person)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        String sql=<span class="string">"update  family set name=?,sex=?,age=?,relationship=? where id=?;"</span>;</span><br><span class="line"></span><br><span class="line">        PreparedStatement preparedStatement= connection.prepareStatement(sql);</span><br><span class="line">        preparedStatement.setInt(<span class="number">5</span>, person.getId());</span><br><span class="line">        preparedStatement.setString(<span class="number">1</span>, person.getName());</span><br><span class="line">        preparedStatement.setString(<span class="number">2</span>, person.getSex());</span><br><span class="line">        preparedStatement.setInt(<span class="number">3</span>, person.getAge());</span><br><span class="line">        preparedStatement.setString(<span class="number">4</span>, person.getRelationship());</span><br><span class="line"></span><br><span class="line">        preparedStatement.execute();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 利用Map集合类传递参数，实现多条件查询</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *     此方法输出整个数据表的所有内容&lt;br&gt;</span></span><br><span class="line"><span class="comment">     *     数据传递路径：resultSet取出信息存储至map对象中，然后再将map对象存储至List中</span></span><br><span class="line"><span class="comment">     * &lt;/p&gt;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> List ResultSet存储的结果，映射至List</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> SQLException 当存在SQL语句错误时，抛出异常</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params 传入键值对信息：1个params包含3对键值信息，分别是目标列，关系以及实际值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List <span class="title">query</span><span class="params">(List&lt;Map&lt;String,Object&gt;&gt; params)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="comment">/*使用StringBuilder可以实现SQL语句的灵活扩展*/</span></span><br><span class="line">        StringBuilder stringBuilder=<span class="keyword">new</span> StringBuilder();</span><br><span class="line">        stringBuilder.append(<span class="string">"select * from family where 1=1 "</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*对于集合类的遍历操作*/</span></span><br><span class="line">        <span class="keyword">if</span>(params!=<span class="keyword">null</span>&amp;&amp;params.size()&gt;<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;params.size();i++)&#123;</span><br><span class="line">                Map&lt;String,Object&gt; map=params.get(i);</span><br><span class="line">                stringBuilder.append(<span class="string">" and "</span>+map.get(<span class="string">"name"</span>)+<span class="string">" "</span>+map.get(<span class="string">"rela"</span>)+<span class="string">" "</span>+map.get(<span class="string">"value"</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(stringBuilder.toString());</span><br><span class="line">        PreparedStatement preparedStatement=connection.prepareStatement(stringBuilder.toString());</span><br><span class="line">        ResultSet resultSet=preparedStatement.executeQuery();</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*建立List和map对象*/</span></span><br><span class="line">        List&lt;Person&gt; personList =<span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        Person person =<span class="keyword">null</span>;</span><br><span class="line">        <span class="comment">/*遍历resultSet，将数据分别存储至map对象中*/</span></span><br><span class="line">        <span class="keyword">while</span> (resultSet.next())&#123;</span><br><span class="line">            person =<span class="keyword">new</span> Person();</span><br><span class="line">            person.setId(resultSet.getInt(<span class="string">"id"</span>));</span><br><span class="line">            person.setName(resultSet.getString(<span class="string">"name"</span>));</span><br><span class="line">            person.setSex(resultSet.getString(<span class="string">"sex"</span>));</span><br><span class="line">            person.setAge(resultSet.getInt(<span class="string">"age"</span>));</span><br><span class="line">            person.setRelationship(resultSet.getString(<span class="string">"relationship"</span>));</span><br><span class="line"></span><br><span class="line">            <span class="comment">/*向List添加map对象*/</span></span><br><span class="line">            personList.add(person);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*将装有map对象的List返回*/</span></span><br><span class="line">        <span class="keyword">return</span> personList;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 对整个数据库表查询</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *     此方法输出整个数据表的所有内容&lt;br&gt;</span></span><br><span class="line"><span class="comment">     *     数据传递路径：resultSet取出信息存储至map对象中，然后再将map对象存储至List中</span></span><br><span class="line"><span class="comment">     * &lt;/p&gt;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> List ResultSet存储的结果，映射至List</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> SQLException 当存在SQL语句错误时，抛出异常</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Person&gt; <span class="title">query</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        String sql=<span class="string">"select * from family;"</span>;</span><br><span class="line">        PreparedStatement preparedStatement=connection.prepareStatement(sql);</span><br><span class="line">        ResultSet resultSet=preparedStatement.executeQuery();</span><br><span class="line"></span><br><span class="line">        List&lt;Person&gt; personList=<span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        Person person=<span class="keyword">new</span> Person();</span><br><span class="line">        <span class="keyword">while</span> (resultSet.next())&#123;</span><br><span class="line">            person =<span class="keyword">new</span> Person();</span><br><span class="line">            person.setId(resultSet.getInt(<span class="string">"id"</span>));</span><br><span class="line">            person.setName(resultSet.getString(<span class="string">"name"</span>));</span><br><span class="line">            person.setSex(resultSet.getString(<span class="string">"sex"</span>));</span><br><span class="line">            person.setAge(resultSet.getInt(<span class="string">"age"</span>));</span><br><span class="line">            person.setRelationship(resultSet.getString(<span class="string">"relationship"</span>));</span><br><span class="line"></span><br><span class="line">            <span class="comment">/*向List添加map对象*/</span></span><br><span class="line">            personList.add(person);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> personList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询数据库中参数id所在条目</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     *     executeQuery方法查询相关语句，并将结果返回至ResultSet中&lt;br&gt;</span></span><br><span class="line"><span class="comment">     *     while循环遍历ResultSet的数据，并输出至map对象中</span></span><br><span class="line"><span class="comment">     * &lt;/p&gt;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> SQLException 当SQL语句出错时，抛出此异常</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 传入此参数，查询其所在条目</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Person 返回所查询的map对象</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">get</span><span class="params">(Integer id)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        Person person =<span class="keyword">new</span> Person();</span><br><span class="line"></span><br><span class="line">        String sql=<span class="string">"select * from family where id=?;"</span>;</span><br><span class="line"></span><br><span class="line">        PreparedStatement preparedStatement= connection.prepareStatement(sql);</span><br><span class="line">        preparedStatement.setInt(<span class="number">1</span>,id);</span><br><span class="line"></span><br><span class="line">        ResultSet resultSet=preparedStatement.executeQuery();</span><br><span class="line">        <span class="keyword">while</span> (resultSet.next())&#123;</span><br><span class="line">            <span class="keyword">assert</span> <span class="keyword">false</span>;</span><br><span class="line">            person.setId(resultSet.getInt(<span class="string">"id"</span>));</span><br><span class="line">            person.setName(resultSet.getString(<span class="string">"name"</span>));</span><br><span class="line">            person.setAge(resultSet.getInt(<span class="string">"age"</span>));</span><br><span class="line">            person.setSex(resultSet.getString(<span class="string">"sex"</span>));</span><br><span class="line">            person.setRelationship(resultSet.getString(<span class="string">"relationship"</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> person;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Control层:创建Dao对象，并建立public方法调用Dao方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> jdbc_1.control;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> jdbc_1.model.Dao;</span><br><span class="line"><span class="keyword">import</span> jdbc_1.model.Person;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    Dao dao=<span class="keyword">new</span> Dao();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Person person)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        dao.add(person);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Person person)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        dao.update(person);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">del</span><span class="params">(Integer id)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        dao.del(id);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Person&gt; <span class="title">query</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> dao.query();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List <span class="title">query</span><span class="params">(List&lt;Map&lt;String,Object&gt;&gt; params)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> dao.query(params);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">get</span><span class="params">(Integer id)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> dao.get(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>试图层：传入参数，展示结果</p>
+<ol>
+<li>程序一直执行：while(true)或for（；；）</li>
+<li>执行完当前模块，才进入下一模块：引入precious标签</li>
+<li>模块类功能一步一步执行：引入step标签</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> jdbc_1.view;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> jdbc_1.control.Service;</span><br><span class="line"><span class="keyword">import</span> jdbc_1.model.Person;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">View</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String CONTEXT=<span class="string">"欢迎查询人物关系：\n"</span> +</span><br><span class="line">            <span class="string">"[M]：主菜单\n"</span>+</span><br><span class="line">            <span class="string">"[Q]：查看全部信息\n"</span>+</span><br><span class="line">            <span class="string">"[G]：查看成员信息\n"</span>+</span><br><span class="line">            <span class="string">"[A]：添加成员信息\n"</span>+</span><br><span class="line">            <span class="string">"[U]：更新成员信息\n"</span>+</span><br><span class="line">            <span class="string">"[D]：删除成员信息\n"</span>+</span><br><span class="line">            <span class="string">"[S]：高级查询信息\n"</span>+</span><br><span class="line">            <span class="string">"[E]：退出查询系统\n"</span>+</span><br><span class="line">            <span class="string">"[B]：返回主菜单\n"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String MAIN=<span class="string">"MAIN"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String QUERY=<span class="string">"QUERY"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String GET=<span class="string">"GET"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ADD=<span class="string">"ADD"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String UPDATE=<span class="string">"UPDATE"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DELETE=<span class="string">"DELETE"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SEARCH=<span class="string">"SEARCH"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EXIT=<span class="string">"EXIT"</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String BACK=<span class="string">"BACK"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        System.out.println(CONTEXT);</span><br><span class="line">        <span class="comment">//怎么保持程序一直执行</span></span><br><span class="line">        Scanner scanner=<span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">        Person person=<span class="keyword">new</span> Person();</span><br><span class="line">        Service service=<span class="keyword">new</span> Service();</span><br><span class="line">        String precious=<span class="keyword">null</span>;</span><br><span class="line">        Integer step=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">            String in=scanner.next();</span><br><span class="line">            <span class="keyword">if</span>(in.toUpperCase().equals(EXIT)||in.toUpperCase().equals(EXIT.substring(<span class="number">0</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                System.out.println(<span class="string">"谢谢你的使用！系统已退出"</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(in.toUpperCase().equals(QUERY)||in.toUpperCase().equals(QUERY.substring(<span class="number">0</span>,<span class="number">1</span>)))&#123;</span><br><span class="line">                System.out.println(<span class="string">"谢谢你的使用！成员信息如下："</span>);</span><br><span class="line">                List&lt;Person&gt; personList=service.query();</span><br><span class="line">                <span class="keyword">for</span>(Person person1:personList)&#123;</span><br><span class="line">                    System.out.println(<span class="string">""</span>+person1.getId()+<span class="string">","</span>+person1.getName()+<span class="string">","</span>+person1.getSex()+<span class="string">","</span>+person1.getAge()+<span class="string">","</span>+person1.getRelationship());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(in.toUpperCase().equals(ADD)||in.toUpperCase().equals(ADD.substring(<span class="number">0</span>,<span class="number">1</span>))||precious.equals(ADD))&#123;</span><br><span class="line">                precious=ADD;</span><br><span class="line">                <span class="keyword">if</span>(step==<span class="number">1</span>)&#123;</span><br><span class="line">                    System.out.println(<span class="string">"欢迎来到新增成员模块"</span>);</span><br><span class="line">                    System.out.println(<span class="string">"请输入『ID』："</span>);</span><br><span class="line">                &#125;<span class="keyword">else</span> <span class="keyword">if</span>(step==<span class="number">2</span>)&#123;</span><br><span class="line">                    person.setId(Integer.valueOf(in));</span><br><span class="line">                    System.out.println(<span class="string">"请输入『姓名』"</span>);</span><br><span class="line">                &#125;<span class="keyword">else</span> <span class="keyword">if</span>(step==<span class="number">3</span>)&#123;</span><br><span class="line">                    person.setName(in);</span><br><span class="line">                    System.out.println(<span class="string">"请输入『年龄』："</span>);</span><br><span class="line">                &#125;<span class="keyword">else</span> <span class="keyword">if</span>(step==<span class="number">4</span>)&#123;</span><br><span class="line">                    person.setAge(Integer.valueOf(in));</span><br><span class="line">                    System.out.println(<span class="string">"请输入『性别』："</span>);</span><br><span class="line">                &#125;<span class="keyword">else</span> <span class="keyword">if</span>(step==<span class="number">5</span>)&#123;</span><br><span class="line">                    person.setSex(in);</span><br><span class="line">                    System.out.println(<span class="string">"请输入『关系』"</span>);</span><br><span class="line">                &#125;<span class="keyword">else</span> <span class="keyword">if</span>(step==<span class="number">6</span>)&#123;</span><br><span class="line">                    person.setRelationship(in);</span><br><span class="line">                    <span class="keyword">try</span>&#123;</span><br><span class="line">                        service.add(person);</span><br><span class="line">                        System.out.println(<span class="string">"新增成员成功"</span>);</span><br><span class="line">                    &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                        System.out.println(<span class="string">"新增成员失败"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(precious.equals(ADD))&#123;</span><br><span class="line">                    step++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">"你输入的值为："</span> + in);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结反思"><a href="#总结反思" class="headerlink" title="总结反思"></a>总结反思</h3><h2 id="JDBC写法优化"><a href="#JDBC写法优化" class="headerlink" title="JDBC写法优化"></a>JDBC写法优化</h2>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/30/io流简介/" rel="next" title="Java IO流简介">
+                <i class="fa fa-chevron-left"></i> Java IO流简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/30/Mysql必知必会/" rel="prev" title="Mysql必知必会">
+                Mysql必知必会 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar2.jpg" alt="YIQIANG">
+            
+              <p class="site-author-name" itemprop="name">YIQIANG</p>
+              <p class="site-description motion-element" itemprop="description">跟随自己的心灵去行动</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/0506ofjava" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://mp.csdn.net/" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>CSDN</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.imooc.com/user/newlogin/from_url/1021/" title="Imooc" target="_blank">Imooc</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.51zxw.net/list.aspx?cid=434" title="51zxw" target="_blank">51zxw</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://github.com/" title="Github" target="_blank">Github</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://bestzuo.cn/posts/blog-establish.html" title="Hexo美化教程" target="_blank">Hexo美化教程</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JDBC基础写法及优化"><span class="nav-number">1.</span> <span class="nav-text">JDBC基础写法及优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC基础写法"><span class="nav-number">1.1.</span> <span class="nav-text">JDBC基础写法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景知识"><span class="nav-number">1.1.1.</span> <span class="nav-text">背景知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本步骤"><span class="nav-number">1.1.2.</span> <span class="nav-text">基本步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目实践"><span class="nav-number">1.1.3.</span> <span class="nav-text">项目实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结反思"><span class="nav-number">1.1.4.</span> <span class="nav-text">总结反思</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC写法优化"><span class="nav-number">1.2.</span> <span class="nav-text">JDBC写法优化</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YIQIANG</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div class="weixin-box">
+  <div class="weixin-menu">
+    <div class="weixin-hover">
+      <div class="weixin-description">微信扫一扫，订阅本博客</div>
+    </div>
+  </div>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/assets/haruto.model.json"},"display":{"position":"right","width":260,"height":520},"mobile":{"show":true}});</script></body>
+</html>
